@@ -1,0 +1,28 @@
+div {
+    text-align: center; /* Center the content */
+    margin-top: 20px; /* Add space at the top */
+  }
+  
+  input[type="text"] {
+    padding: 10px;
+    margin-right: 10px;
+    width: 300px; /* Adjust as per your design */
+    border: 2px solid #ccc; /* Example style, adjust as needed */
+    border-radius: 5px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background-color: #000; /* Adjust to match your design */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #555; /* Darker background on hover */
+  }
+  
+  /* Add more styles as needed */
+  

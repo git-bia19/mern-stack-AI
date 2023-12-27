@@ -1,0 +1,19 @@
+div {
+    font-family: 'Arial', sans-serif; /* Use the font that matches your design */
+    color: #333; /* Text color */
+  }
+  
+  h1 {
+    text-align: center;
+    color: #000; /* Title color */
+    margin-top: 50px;
+  }
+  
+  p {
+    text-align: center;
+    color: #666; /* Paragraph text color */
+    margin-top: 20px;
+  }
+  
+  /* Add more styles as needed */
+  

@@ -1,0 +1,288 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { preview } from '../assets';
+import { FormField, Loader } from '../components';
+import { useData } from './DataContext'; // Assuming this is the correct path to your custom hook
+const CreatePost = () => {
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState({
+    prompt: `${data.businessName}, ${data.description}, targeting ${data.targetAudience} with a color theme of ${data.color}`,
+    photo: '',
+  });
+
+  const { data, updateData } = useData(); // Use the custom hook to get and update data from the DataContext
+
+  const [generatingImg, setGeneratingImg] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+ 
+  const generateImage = async () => {
+    if (form.prompt) {
+      try {
+        setGeneratingImg(true);
+      const response = await fetch('http://localhost:8000/api/v1/dalle', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+  
+          },
+          body: JSON.stringify({
+            prompt: form.prompt,
+          }),
+        });
+
+        const data = await response.json();
+        updateData({ photo: `data:image/jpeg;base64,${data.photo}` });
+        setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
+      } catch (err) {
+        alert(err);
+      } finally {
+        setGeneratingImg(false);
+      }
+    } else {
+      alert('Please provide proper prompt');
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (form.prompt && form.photo) {
+      setLoading(true);
+      try {
+        const response = await fetch('http://localhost:8000/api/v1/post', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          
+          },
+          body: JSON.stringify({ ...form }),
+        });
+
+        await response.json();
+        alert('Success');
+        navigate('/');
+      } catch (err) {
+        alert(err);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      alert('Please generate an image with proper details');
+    }
+  };
+  useEffect(() => {
+    generateImage();
+  }, [data]);
+
+  return (
+    <section className="max-w-7xl mx-auto">
+      <div>
+        <h1 className="font-extrabold text-[#222328] text-[32px]">Create</h1>
+        <p className="mt-2 text-[#666e75] text-[14px] max-w-[500px]">Generate an imaginative image through DALL-E AI and share it with the community</p>
+      </div>
+
+      <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
+        <div className="flex flex-col gap-5">
+         
+
+          <FormField
+            labelName="Prompt"
+            type="text"
+            name="prompt"
+            placeholder="An Impressionist oil painting of sunflowers in a purple vase…"
+            value={form.prompt}
+            handleChange={handleChange}
+            
+          />
+
+          <div className="relative bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64 p-3 h-64 flex justify-center items-center">
+            { form.photo ? (
+              <img
+                src={form.photo}
+                alt={form.prompt}
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <img
+                src={preview}
+                alt="preview"
+                className="w-9/12 h-9/12 object-contain opacity-40"
+              />
+            )}
+
+            {generatingImg && (
+              <div className="absolute inset-0 z-0 flex justify-center items-center bg-[rgba(0,0,0,0.5)] rounded-lg">
+                <Loader />
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-5 flex gap-5">
+          <button
+            type="button"
+            onClick={generateImage}
+            className=" text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+          >
+            {generatingImg ? 'Generating...' : 'Generate'}
+          </button>
+        </div>
+
+        <div className="prompt-display">
+        <p>Your request: {data.businessName}, {data.description}, targeting {data.targetAudience} with a color theme of {data.color}.</p>
+      </div>
+      <div className="actions">
+       
+        <button onClick={() => {/* Handle save functionality */}}>Save</button>
+        <button onClick={() => {/* Handle edit functionality */}}>Edit</button>
+    </div>
+      </form>
+    </section>
+  );
+};
+
+export default CreatePost;
+// ImageEditor.jsx
+import React, { useEffect, useRef,useState } from 'react';
+import { fabric } from 'fabric';
+import { useLocation } from 'react-router-dom';
+import './ImageEditor.css';
+
+class Layer {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.objects = [];
+    }
+  
+    addObject(obj) {
+      this.objects.push(obj);
+      this.canvas.add(obj);
+    }
+  
+    removeObject(obj) {
+      const index = this.objects.indexOf(obj);
+      if (index > -1) {
+        this.objects.splice(index, 1);
+        this.canvas.remove(obj);
+      }
+    }
+  
+    // ... more methods as needed
+  }
+  
+  // A simplified JavaScript version of the LayerManager class
+  class LayerManager {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.layers = [new Layer(canvas)]; // Start with one layer
+      this.activeLayerIndex = 0; // The index of the active layer
+    }
+  
+    addLayer() {
+      const newLayer = new Layer(this.canvas);
+      this.layers.push(newLayer);
+      return newLayer;
+    }
+  
+    removeLayer(index) {
+      const layer = this.layers[index];
+      if (layer) {
+        layer.objects.forEach(obj => this.canvas.remove(obj));
+        this.layers.splice(index, 1);
+      }
+    }
+  
+    // ... more methods as needed
+  }
+const ImageEditor = () => {
+  const location = useLocation();
+  const canvasRef = useRef(null);
+  const [layers, setLayers] = useState([]);
+  const [layerManager, setLayerManager] = useState(null);
+  const { photo } = location.state || {}; // Ensure photo is not undefined
+
+ console.log({photo})
+  useEffect(() => {
+    if (!photo) {
+      console.error('No photo provided to the ImageEditor.');
+      return;
+    }
+
+    const canvas = new fabric.Canvas(canvasRef.current, {
+      width: 800,
+      height: 600,
+    });
+    
+    
+    const layerManagerInstance = new LayerManager(canvas);
+    setLayerManager(layerManagerInstance);
+
+    // Add the generated image to the canvas
+    fabric.Image.fromURL(photo, (img) => {
+      // Set the image scale to fit the canvas size
+      const scale = Math.min(
+        canvas.width / img.width,
+        canvas.height / img.height
+      );
+      img.set({
+        scaleX: scale,
+        scaleY: scale,
+        selectable: true, // Make the image selectable for moving around
+      });
+      canvas.centerObject(img); // Center the image in the canvas
+      canvas.add(img).renderAll // Render the canvas
+      const initialLayer = layerManagerInstance.addLayer();
+      initialLayer.addObject(img);
+      setLayers([...layers, initialLayer]); // Update the layers state
+    });
+
+    // Setup layering functionality if needed
+
+    return () => {
+      canvas.dispose(); // Clean up the canvas when the component unmounts
+    };
+  }, [photo]);
+  
+   // Handle adding a new layer
+   const addNewLayer = () => {
+    if (layerManager) {
+      const newLayer = layerManager.addLayer();
+      setLayers([...layers, newLayer]); // Update the layers state
+    }
+  };
+  const removeSelectedLayer = (layerIndex) => {
+    if (layerManager) {
+      layerManager.removeLayer(layerIndex);
+      setLayers(layers.filter((_, index) => index !== layerIndex)); // Update the layers state
+    }
+  };
+  // ... other functionality to add, move, remove objects ...
+  const renderLayerPanel = () => {
+    return layers.map((layer, index) => (
+      <div key={index}>
+        Layer {index + 1}
+        <button onClick={() => removeSelectedLayer(index)}>Remove</button>
+      </div>
+    ));
+  };
+
+  
+  return (
+    
+    <div>
+      <canvas ref={canvasRef} />
+      <div className="layer-panel">
+        <button onClick={addNewLayer}>Add Layer</button>
+        {renderLayerPanel()}
+      </div>
+      {/* Add additional buttons and functionality as needed */}
+    </div>
+     
+  );
+};
+
+export default ImageEditor;

@@ -1,0 +1,36 @@
+.describe-business-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .describe-business-container h2 {
+    margin-bottom: 20px;
+  }
+  
+  .describe-business-container p {
+    margin-bottom: 40px;
+  }
+  
+  .describe-business-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .describe-business-container button {
+    padding: 10px 20px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .describe-business-container button:hover {
+    background-color: #333;
+  }
+  

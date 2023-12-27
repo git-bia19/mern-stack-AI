@@ -1,0 +1,26 @@
+header {
+  background-color: #ffffff; /* Adjust color to match your design */
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header img {
+  /* You may need to adjust the width and height according to your logo */
+  width: auto;
+  height: 50px;
+}
+
+nav {
+  display: flex;
+}
+
+nav a {
+  margin-right: 20px;
+  text-decoration: none;
+  color: #333; /* Adjust color to match your design */
+  font-weight: bold;
+}
+
+/* Add more styles as needed */

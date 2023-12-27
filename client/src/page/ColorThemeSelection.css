@@ -1,0 +1,44 @@
+.color-theme-container {
+  max-width: 600px; /* Adjust width as needed */
+  margin: 0 auto; /* Center the container */
+  padding: 20px;
+  text-align: center; /* Center text elements */
+  background-color: #ffffff; /* Light gray background */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.color-theme-container h2 {
+  margin-bottom: 20px; /* Space below the header */
+  color: #333; /* Dark text for better readability */
+  font-size: 24px; /* Larger font size */
+}
+
+.color-input {
+  width: 100%; /* Full width */
+  padding: 10px 15px; /* Padding inside the input */
+  margin-bottom: 20px; /* Space below the input */
+  border: 2px solid #ced4da; /* Border color */
+  border-radius: 4px; /* Rounded corners for the input */
+  font-size: 16px; /* Text size */
+}
+
+
+  
+.submit-button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #000000;
+  color: white;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: auto; /* Auto-width based on content */
+  align-self: stretch; /* Stretch to match the width of the container */
+
+}
+
+.submit-button:hover {
+  background-color: #333232; /* Darker blue on hover */
+}

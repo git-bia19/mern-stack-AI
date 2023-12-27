@@ -1,0 +1,46 @@
+.audience-selection-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    text-align: center;
+    background-color: #fff; /* or any color you prefer */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: adds subtle shadow around the container */
+  }
+  
+  .audience-selection-container h2 {
+    margin-bottom: 20px;
+  }
+  
+  .audience-selection-container form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align items to the start of the flex container */
+    width: 100%;
+  }
+  
+  .audience-selection-container label {
+    margin-bottom: 10px;
+    display: block; /* Makes the label take up the full width */
+    cursor: pointer;
+  }
+  
+  .audience-selection-container input[type="radio"] {
+    margin-right: 10px;
+  }
+  
+  .audience-selection-container button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #000; /* Your button color */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: center; /* Aligns the button to the center of the flex container */
+  }
+  
+  .audience-selection-container button:hover {
+    background-color: #333; /* Darker shade on hover */
+  }
+  

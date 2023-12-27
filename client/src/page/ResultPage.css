@@ -1,0 +1,66 @@
+.result-container {
+    max-width: 800px;
+    margin: 20px auto;
+    text-align: center;
+  }
+  
+  .generated-image-container {
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding: 10px;
+  }
+  
+  .generated-image-container img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .prompt-display {
+    background-color: #f7f7f7;
+    border-left: 4px solid #6469ff; /* Adjust color to match branding */
+    margin: 20px 0;
+    padding: 10px;
+    font-style: italic;
+    text-align: left;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    background-color: #6469ff; /* Adjust color to match branding */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #5558df; /* Slightly darker on hover */
+  }
+  
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Additional styles for feedback button if needed */
+  .feedback-button {
+    background-color: transparent;
+    color: #6469ff;
+    border: 2px solid #6469ff;
+    padding: 10px 20px;
+    margin-top: 20px;
+  }
+  
+  .feedback-button:hover {
+    background-color: #6469ff;
+    color: white;
+  }
+  
