@@ -5,6 +5,7 @@ import cors from 'cors';
 import connectDB from './mongodb/connect.js';
 import postRoutes from './routes/postRoutes.js';
 import dalleRoutes from './routes/dalleRoutes.js';
+import openAIroutes from './routes/openAIroutes.js';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.get('/', async (req, res) => {
 
 app.use('/api/v1/post', postRoutes);
 app.use('/api/v1/dalle', dalleRoutes);
+app.use('/classify-text', openAIroutes)
 
 
 const startServer = async () => {

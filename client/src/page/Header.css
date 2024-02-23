@@ -1,26 +1,52 @@
-header {
-  background-color: #ffffff; /* Adjust color to match your design */
-  padding: 10px;
+/* Google font inclusion for header */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* Header styles */
+.header {
+  font-family: 'Poppins', sans-serif;
+  background: #121212; /* Dark background for contrast */
+  padding: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-header img {
-  /* You may need to adjust the width and height according to your logo */
-  width: auto;
-  height: 50px;
+/* Neon gradient for the title */
+.header .title {
+  font-size: 1.5rem;
+  background: linear-gradient(90deg, rgb(183, 135, 234) 0%, rgb(255, 81, 200) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
 }
 
-nav {
+/* Header navigation styles */
+.header nav {
   display: flex;
+  gap: 60px;
 }
 
-nav a {
-  margin-right: 20px;
+.header nav a {
   text-decoration: none;
-  color: #333; /* Adjust color to match your design */
-  font-weight: bold;
+  color: #fff;
+  font-size: 0.98rem;
+  transition: color 0.3s ease;
 }
 
-/* Add more styles as needed */
+.header nav a:hover {
+  color: #e051b3; /* Light purple color for hover effect */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .header nav {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

@@ -1,36 +1,112 @@
-.describe-business-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    text-align: center;
-  }
-  
-  .describe-business-container h2 {
-    margin-bottom: 20px;
-  }
-  
-  .describe-business-container p {
-    margin-bottom: 40px;
-  }
-  
-  .describe-business-container input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .describe-business-container button {
-    padding: 10px 20px;
-    background-color: #000;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .describe-business-container button:hover {
-    background-color: #333;
-  }
-  
+/* Main container styling to center everything */
+body {
+  background-image: url("../images/finalbg.png");
+  background-size: cover;
+  color: aliceblue;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+/* Google font inclusion */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+.collage-creator-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 20px; /* Add some padding and allow space for scrolling */
+  min-height: 100vh;
+  position: relative;
+  box-sizing: border-box; /* Include padding in the box's total width and height */
+}
+
+/* Styling for the text area */
+.prompt-textarea {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid transparent;
+  border-radius: 20px;
+  padding: 15px 20px;
+  width: 40%; /* Make width responsive */
+  margin-bottom: 20px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 400;
+ 
+}
+
+/* Remove the outline on focus for text area and buttons */
+.prompt-textarea:focus, .classify-text-button:focus, .object-entry button:focus, .collage-item button:focus {
+  outline: none;
+}
+
+/* Styling for the buttons */
+.classify-text-button, .object-entry button, .collage-item button {
+  background: linear-gradient(90deg, rgba(186,125,199,1) 0%, rgba(190,106,167,1) 100%);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 10px; /* Add space above the button */
+}
+
+/* Hover effect for buttons */
+.classify-text-button:hover, .object-entry button:hover, .collage-item button:hover {
+  background: linear-gradient(90deg, rgba(222,146,200,1) 0%, rgba(152,70,124,1) 100%);
+}
+
+/* Grid layout for object listing */
+.object-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+.object-entry {
+  background: black;
+  padding: 20px;
+  border-radius: 20px;
+  text-align: center;
+  border: 1px solid #ffffff;
+}
+
+/* Image preview and collage area styles */
+.collage-item img {
+  max-width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+}
+.image-preview img {
+  max-width: 100%;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+}
+.collage-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Make the 'Add to Collage' appear on the right side */
+.collage-area {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 50px; /* Adjust as necessary */
+  right: 20px;
+  width: 200px; /* Fixed width for collage items */
+  background-color: black;
+}
+
+/* Adjustments for better visual hierarchy */
+.collage-item {
+  margin-bottom: 10px; /* Add space between collage items */
+}
