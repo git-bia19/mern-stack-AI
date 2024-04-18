@@ -9,7 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cloudinary/url-gen": "^1.19.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/material": "^5.15.15",
     "@tensorflow-models/deeplab": "^0.2.2",
+    "fabric": "^5.3.0",
     "file-saver": "^2.0.5",
     "image-js": "^0.35.5",
     "react": "^18.2.0",

@@ -1,112 +1,224 @@
-/* Main container styling to center everything */
-body {
-  background-image: url("../images/finalbg.png");
-  background-size: cover;
-  color: aliceblue;
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  overflow-y: auto; /* Enable vertical scrolling */
-}
+/* DescribeBusinessPage.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap');
 
-/* Google font inclusion */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  background-color: #000000; /* Deep purple background */
+  margin: 0;
+  padding: 0;
+}
 
 .collage-creator-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 50px 20px; /* Add some padding and allow space for scrolling */
-  min-height: 100vh;
-  position: relative;
-  box-sizing: border-box; /* Include padding in the box's total width and height */
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-/* Styling for the text area */
 .prompt-textarea {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid transparent;
-  border-radius: 20px;
-  padding: 15px 20px;
-  width: 40%; /* Make width responsive */
-  margin-bottom: 20px;
-  color: white;
-  font-size: 1rem;
-  font-weight: 400;
- 
-}
-
-/* Remove the outline on focus for text area and buttons */
-.prompt-textarea:focus, .classify-text-button:focus, .object-entry button:focus, .collage-item button:focus {
-  outline: none;
-}
-
-/* Styling for the buttons */
-.classify-text-button, .object-entry button, .collage-item button {
-  background: linear-gradient(90deg, rgba(186,125,199,1) 0%, rgba(190,106,167,1) 100%);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 20px;
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1rem;
   border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #252036; /* Slightly lighter purple for textarea */
+  color: #fff;
+}
+
+.classify-text-button,
+.open-editor-button {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #8C52FF; /* Bright purple */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 1rem;
-  font-weight: 600;
-  margin-top: 10px; /* Add space above the button */
+  transition: background-color 0.3s;
 }
 
-/* Hover effect for buttons */
-.classify-text-button:hover, .object-entry button:hover, .collage-item button:hover {
-  background: linear-gradient(90deg, rgba(222,146,200,1) 0%, rgba(152,70,124,1) 100%);
+.classify-text-button:hover,
+.open-editor-button:hover {
+  background-color: #A280FF; /* Lighter purple */
 }
 
-/* Grid layout for object listing */
 .object-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-  width: 100%;
-  justify-content: center;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column; /* List objects vertically */
 }
 
 .object-entry {
-  background: black;
-  padding: 20px;
-  border-radius: 20px;
-  text-align: center;
-  border: 1px solid #ffffff;
+  background: #252036; /* Slightly lighter purple for the object entry */
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
 }
 
-/* Image preview and collage area styles */
-.collage-item img {
-  max-width: 100%;
-  border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-
+.object-entry p {
+  margin: 0;
+  margin-bottom: 1rem;
 }
+
+.object-entry button {
+  padding: 0.5rem 1rem;
+  background-color: #4CAF50; /* Green color for buttons */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.object-entry button:hover {
+  background-color: #66BB6A; /* Lighter green on hover */
+}
+
+/* Image Preview Styles */
+.image-preview {
+  margin-bottom: 1rem; /* Space between image previews */
+}
+
 .image-preview img {
-  max-width: 100%;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-
+  width: 400px; /* Smaller width for generated images */
+  height: auto;
+  border-radius: 4px; /* Slightly rounded corners for images */
+  display: block; /* Ensure the image is block level to fit the container width */
+  margin-bottom: 0.5rem; /* Space below image */
 }
+
 .collage-area {
+  background: #252036; /* Slightly lighter purple for collage area */
+  padding: 1rem;
+  border-radius: 8px;
+  min-height: 200px; /* Minimum height */
+}
+
+.collage-item {
+  display: inline-block;
+  margin-right: 1rem;
+  position: relative;
+}
+
+.collage-item img {
+  width: 100px; /* Fixed width for collage images */
+  height: auto;
+  border-radius: 4px; /* Slightly rounded corners for images */
+}
+
+.collage-item button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 0.25rem 0.5rem;
+  background-color: #FF1744; /* Red color for remove button */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.collage-item button:hover {
+  background-color: #FF5252; /* Lighter red on hover */
+}
+
+.animated-text-container {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.static-text {
+  font-size: 2.5rem; /* Large text size */
+  font-weight: bold; /* Bold text */
+  color: #ffffff; /* White color text */
+}
+
+.dynamic-text {
+  display: inline-block;
+  animation: fadeBusiness linear 5s infinite;
+}
+
+.dynamic-text.Personal\ Use {
+  animation: fadePersonal linear 4s infinite;
+}
+
+@keyframes fadeBusiness {
+  0%, 100% {
+    color: white; /* Start and end with white for 'Businesses' */
+    opacity: 1;
+  }
+  25% {
+    color: rgb(187, 113, 236); /* Transition to purple */
+  }
+  50% {
+    opacity: 0.5; /* Fade out */
+    
+  }
+}
+
+@keyframes fadePersonal {
+  0%, 100% {
+    color: white; /* Start and end with white for 'Personal Use' */
+    opacity: 1;
+  }
+  25% {
+    color: rgb(245, 152, 217); /* Transition to pink */
+  }
+  50% {
+    opacity: 0.5; /* Fade out */
+  }
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .collage-creator-container {
+    padding: 1rem;
+  }
+
+  .collage-item img {
+    width: 80px; /* Smaller width for collage images on mobile */
+  }
+
+  .prompt-textarea,
+  .classify-text-button,
+  .open-editor-button {
+    padding: 0.8rem; /* Smaller padding on mobile */
+  }
+}
+.button-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  margin-top: 20px;
+  align-items: center;
+  gap: 10px;
 }
 
-/* Make the 'Add to Collage' appear on the right side */
-.collage-area {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: 50px; /* Adjust as necessary */
-  right: 20px;
-  width: 200px; /* Fixed width for collage items */
-  background-color: black;
+.button-group p {
+  margin-right: 10px;
 }
 
-/* Adjustments for better visual hierarchy */
-.collage-item {
-  margin-bottom: 10px; /* Add space between collage items */
+.selection-button {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 20px;
+  border: 2px solid rgb(240, 155, 199);
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.selection-button:hover {
+  background-color: rgba(128, 0, 128, 0.2);
+  border-color: purple;
+}
+
+.selection-button.active {
+  background-color: rgba(128, 0, 128, 0.5);
+  border-color: rgb(237, 148, 207);
 }
