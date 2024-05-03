@@ -31,7 +31,7 @@ app.use('/remove-background', removebgAPI);
 const startServer = async () => {
   try {
     connectDB(process.env.MONGODB_URL);
-    app.listen(8080, () => console.log('Server started on port 8080'));
+    app.listen(3000, () => console.log('Server started on port 3000'));
   } catch (error) {
     console.log(error);
   }

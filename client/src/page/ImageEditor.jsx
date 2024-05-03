@@ -1,20 +1,19 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Stage, Layer, Image as KonvaImage, Line, Text, Transformer } from 'react-konva';
+import { Stage, Layer, Image as KonvaImage, Line, Text, Transformer ,Rect } from 'react-konva';
 import useImage from 'use-image';
 import './ImageEditor.css';
 import axios from 'axios';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
-
-// Import icons from Material-UI Icons
 import SaveIcon from '@mui/icons-material/Save';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
+import SketchPicker from 'react-color';
 
 
 const ImageEditor = () => {
@@ -23,6 +22,9 @@ const ImageEditor = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [textItems, setTextItems] = useState([]);
+  const [isEditingText, setIsEditingText] = useState(false);
+  const [editingTextId, setEditingTextId] = useState(null);
+  const [editingTextValue, setEditingTextValue] = useState('');
   const [selectedFont, setSelectedFont] = useState('Arial');
   const [drawing, setDrawing] = useState(false);
   const [currentLines, setCurrentLines] = useState([]);
@@ -32,12 +34,91 @@ const ImageEditor = () => {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const stageRef = useRef(null);
   const trRef = useRef(null);
-  
   const [image] = useImage(images[selectedImageIndex]?.src, 'Anonymous');
-  const [isEditingText, setIsEditingText] = useState(false);
-  const [editingTextValue, setEditingTextValue] = useState('');
-  const [editingTextId, setEditingTextId] = useState(null);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [layers, setLayers] = useState([]);
+  const [backgroundColor, setBackgroundColor] = useState('#FFFFFF');
+  const [backgroundImage, setBackgroundImage] = useState(null);
+  const [selectedForBackground, setSelectedForBackground] = useState(null);
+  const [backgroundLayer, setBackgroundLayer] = useState(null);
+
+ 
+  useEffect(() => {
+    const layer = new Konva.Layer();
+    stageRef.current.add(layer);
+    setBackgroundLayer(layer);
+  }, []);
+
+  useEffect(() => {
+    setBackground();
+  }, [backgroundImage, backgroundColor]);
+
+  const setBackground = useCallback(() => {
+    if (!backgroundLayer) return;
+
+    backgroundLayer.removeChildren();
+    if (backgroundImage) {
+      const imageObj = new Image();
+      imageObj.onload = () => {
+        const konvaImage = new Konva.Image({
+          image: imageObj,
+          width: stageRef.current.width(),
+          height: stageRef.current.height(),
+        });
+        backgroundLayer.add(konvaImage);
+        backgroundLayer.batchDraw();
+      };
+      imageObj.src = backgroundImage;
+    } else {
+      const rect = new Konva.Rect({
+        x: 0,
+        y: 0,
+        width: stageRef.current.width(),
+        height: stageRef.current.height(),
+        fill: backgroundColor,
+      });
+      backgroundLayer.add(rect);
+      backgroundLayer.batchDraw();
+    }
+  }, [backgroundImage, backgroundColor, backgroundLayer]);
+
+
   
+
+  
+  // Ensure the main image layer is always on top
+  useEffect(() => {
+    if (stageRef.current && backgroundLayer) {
+      const imageLayer = stageRef.current.findOne('#imageNode');
+      if (imageLayer) {
+        imageLayer.moveToTop();
+      }
+      backgroundLayer.moveToBottom(); // Make sure the background layer stays at the bottom
+    }
+  }, [backgroundImage, backgroundColor, backgroundLayer]);
+  const makeImageMovable = useCallback(() => {
+    const mainImage = stageRef.current.findOne('#imageNode');
+    if (mainImage) {
+      mainImage.draggable(true);
+      mainImage.moveToTop(); // Ensures the main image is always on top
+      mainImage.getLayer().batchDraw();
+    }
+  }, []);
+    
+  const handleSetBackground = useCallback(() => {
+    if (selectedForBackground) {
+      setBackground();
+      makeImageMovable();
+    }
+  }, [selectedForBackground, setBackground, makeImageMovable]);
+  
+  const handleSelectForBackground = useCallback((e) => {
+    const index = parseInt(e.target.value, 10);
+    if (index === selectedImageIndex || index < 0 || index >= images.length) return;
+    setBackgroundImage(images[index].src);
+    setBackgroundColor('#FFFFFF');
+  }, [images, selectedImageIndex]);
+ 
 
   const [filterSettings, setFilterSettings] = useState({
     brightness: 100,
@@ -51,6 +132,55 @@ const ImageEditor = () => {
   });
   
 
+  const removeBackgroundFromImage = async () => {
+    // Check if an image is selected
+    if (!images[selectedImageIndex]) return;
+  
+    const apiKey = "cqcr6A8ig262gs13h5N9cfhM"; // Replace with your API key
+    const imageUrl = images[selectedImageIndex].src;
+  
+    try {
+      // Convert Data URL or Blob URL to Blob object
+      const response = await fetch(imageUrl);
+      const imageBlob = await response.blob();
+  
+      const formData = new FormData();
+      formData.append("image_file", imageBlob, "image.png"); // Assuming the filename doesn't matter to the API
+  
+      const res = await fetch("https://api.remove.bg/v1.0/removebg", {
+        method: 'POST',
+        headers: {
+          'X-Api-Key': apiKey
+        },
+        body: formData
+      });
+  
+      if (!res.ok) {
+        throw new Error(`Error: ${res.status}`); // If the response is not ok, throw an error
+      }
+  
+      const data = await res.blob();
+  
+      // Create a local URL for the returned image
+      const newImageSrc = URL.createObjectURL(data);
+  
+      // Update the image state with the new image
+      setImages((prevImages) =>
+        prevImages.map((img, index) =>
+          index === selectedImageIndex ? { ...img, src: newImageSrc } : img
+        )
+      );
+  
+    } catch (error) {
+      console.error('Error removing background:', error);
+    }
+  };
+  
+
+  
+  
+
+  
   useEffect(() => {
     if (selectedNodeId) {
       const selectedNode = stageRef.current.findOne(`#${selectedNodeId}`);
@@ -61,20 +191,6 @@ const ImageEditor = () => {
     }
   }, [selectedNodeId]);
  
-  const addText = useCallback(() => {
-    const newText = {
-      text: 'New Text',
-      x: 50,
-      y: 50 + (textItems.length * 20),
-      fontSize: 24,
-      fontFamily: selectedFont,
-      id: `text_${Date.now()}`,
-      draggable: true,
-    };
-    setTextItems(textItems.concat(newText));
-    addToHistory();
-  }, [textItems, selectedFont]);
-
 
   const updateFilterSettings = (setting, value) => {
     setFilterSettings({ ...filterSettings, [setting]: parseInt(value, 10) });
@@ -112,6 +228,7 @@ const handleMouseDown = (e) => {
   setCurrentLines([[pos.x, pos.y]]); // Start a new line with the initial point
 };
 
+
 const handleMouseMove = (e) => {
   // Only add points to the line if in drawing mode and the mouse is down
   if (!drawing || currentLines.length === 0) return;
@@ -132,42 +249,59 @@ const handleMouseUp = () => {
     setCurrentLines([]); // Optionally reset currentLines here if you want to start fresh on next mouse down
   }
 };
-
+const handleDragEnd = (e, layerId) => {
+  const index = layers.findIndex(layer => layer.id === layerId);
+  const newLayers = [...layers];
+  newLayers[index] = {
+    ...newLayers[index],
+    x: e.target.x(),
+    y: e.target.y(),
+  };
+  setLayers(newLayers);
+};
 
 const addToHistory = useCallback(() => {
-  // Use functional updates to ensure we capture the latest state
-  setHistory((currentHistory) => {
-    const newHistory = currentHistory.slice(0, currentStep + 1);
-    newHistory.push({
-      lines: [...lines],
-      textItems: [...textItems],
-      selectedNodeId,
-    });
-    return newHistory;
-  });
-  setCurrentStep((step) => step + 1);
-}, [lines, textItems, selectedNodeId, currentStep]);
+  const newHistory = [...history, {
+    images: [...images],
+    textItems: [...textItems],
+    lines: [...lines],
+    selectedNodeId,
+    backgroundImage,
+    backgroundColor
+  }];
+  setHistory(newHistory);
+  setCurrentStep(newHistory.length - 1);
+}, [history, images, textItems, lines, selectedNodeId, backgroundImage, backgroundColor]);
 
-const undo = useCallback(() => {
-  if (currentStep > 0) {
-    setCurrentStep((step) => step - 1);
-    const prevState = history[currentStep - 1];
-    setLines(prevState.lines);
-    setTextItems(prevState.textItems);
-    setSelectedNodeId(prevState.selectedNodeId);
-  }
-}, [currentStep, history]);
+  // Undo action
+  const undo = useCallback(() => {
+    if (currentStep > 0) {
+      const prevState = history[currentStep - 1];
+      setImages(prevState.images);
+      setTextItems(prevState.textItems);
+      setLines(prevState.lines);
+      setSelectedNodeId(prevState.selectedNodeId);
+      setBackgroundImage(prevState.backgroundImage);
+      setBackgroundColor(prevState.backgroundColor);
+      setCurrentStep(currentStep - 1);
+    }
+  }, [currentStep, history]);
 
-const redo = useCallback(() => {
-  if (currentStep < history.length - 1) {
-    setCurrentStep((step) => step + 1);
-    const nextState = history[currentStep + 1];
-    setLines(nextState.lines);
-    setTextItems(nextState.textItems);
-    setSelectedNodeId(nextState.selectedNodeId);
-  }
-}, [currentStep, history]);
+  // Redo action
+  const redo = useCallback(() => {
+    if (currentStep < history.length - 1) {
+      const nextState = history[currentStep + 1];
+      setImages(nextState.images);
+      setTextItems(nextState.textItems);
+      setLines(nextState.lines);
+      setSelectedNodeId(nextState.selectedNodeId);
+      setBackgroundImage(nextState.backgroundImage);
+      setBackgroundColor(nextState.backgroundColor);
+      setCurrentStep(currentStep + 1);
+    }
+  }, [currentStep, history]);
 
+ 
   const handleSave = useCallback(() => {
     if (stageRef.current) {
       const dataURL = stageRef.current.toDataURL({ pixelRatio: 3 });
@@ -180,27 +314,70 @@ const redo = useCallback(() => {
     }
   }, []);
 
-  const handleTextClick = useCallback((id) => {
-    const textItem = textItems.find(item => item.id === id);
-    if (textItem) {
-      setIsEditingText(true);
-      setEditingTextValue(textItem.text);
-      setEditingTextId(id);
-    }
-  }, [textItems]);
+  
  
 
-  const finalizeTextEditing = useCallback(() => {
-    if (!editingTextId) return;
+  
+  const handleBackgroundColorChange = (color) => {
+    setBackgroundColor(color.hex);
+    setBackgroundImage(null); // Ensure no image is set as background
+    setBackground(); // Update the background
+  };
+  
 
-    const updatedTextItems = textItems.map(item =>
+  const handleBackgroundImageUpload = useCallback((event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setBackgroundImage(e.target.result);
+        setBackgroundColor('#FFFFFF');
+      };
+      reader.readAsDataURL(file);
+    }
+  }, []);
+
+  const addText = useCallback(() => {
+    const newText = {
+      text: 'Type here...', // Initial text placeholder
+      x: 500, // Initial X position
+      y: 500 + (textItems.length * 30), // Stagger the Y position of new text items
+      fontSize: 30,
+      fontFamily: selectedFont,
+      id: `text_${Date.now()}`, // Unique ID using timestamp
+      draggable: true
+    };
+    setTextItems(textItems => [...textItems, newText]);
+    addToHistory(); // Capture this state change for the undo/redo functionality
+  }, [textItems, selectedFont, addToHistory]);
+
+  const handleTextClick = (id) => {
+    const textItem = textItems.find(item => item.id === id);
+    setIsEditingText(true);
+    setEditingTextValue(textItem.text);
+    setEditingTextId(id);
+  };
+  const finalizeTextEditing = () => {
+  setTextItems(textItems =>
+    textItems.map(item =>
       item.id === editingTextId ? { ...item, text: editingTextValue } : item
-    );
-    setTextItems(updatedTextItems);
-    setIsEditingText(false);
-    setEditingTextId(null);
-    addToHistory();
-  }, [editingTextId, editingTextValue, textItems]);
+    )
+  );
+  setIsEditingText(false);
+  setEditingTextId(null);
+  addToHistory();
+};
+const handleTextDragEnd = (e, id) => {
+  const newPos = {
+    x: e.target.x(),
+    y: e.target.y()
+  };
+  setTextItems(textItems =>
+    textItems.map(item => (item.id === id ? { ...item, ...newPos } : item))
+  );
+  addToHistory();
+};
+
 
   return (
     <div className="editor-container">
@@ -216,7 +393,31 @@ const redo = useCallback(() => {
           />
         ))}
       </div>
+     
       <div className="toolbar">
+    <button onClick={() => setIsPanelOpen(!isPanelOpen)} className="panel-toggle">
+      {isPanelOpen ? " X Layer Panel" : " Layer Panel >"}
+    </button>
+    {isPanelOpen && (
+      <div className="background-panel">
+  <SketchPicker color={backgroundColor} onChangeComplete={handleBackgroundColorChange} />
+  <input type="file" onChange={handleBackgroundImageUpload} accept="image/*" />
+  <select onChange={handleSelectForBackground} value={selectedForBackground || ""}>
+    <option value="">Select an Image for Background</option>
+    {images.map((img, index) => (
+      index !== selectedImageIndex && <option key={index} value={index}>{`Image ${index + 1}`}</option>
+    ))}
+
+  </select>
+  <button onClick={() => {
+    handleSetBackground();
+    makeImageMovable();
+  }}>Set as Background</button>
+  <button onClick={removeBackgroundFromImage}>Remove Background</button>
+</div>
+    )}
+      
+
          <Tooltip title="Save Image" arrow>
         <IconButton onClick={handleSave}>
           <SaveIcon />
@@ -224,7 +425,7 @@ const redo = useCallback(() => {
       </Tooltip>
 
       <Tooltip title="Add Text" arrow>
-        <IconButton onClick={addText}>
+        <IconButton onClick={addText}  >
           <AddCircleOutlineIcon />
         </IconButton>
       </Tooltip>
@@ -258,22 +459,32 @@ const redo = useCallback(() => {
       <EditIcon />
     </IconButton>
   </Tooltip>
-        <select value={selectedFont} onChange={(e) => setSelectedFont(e.target.value)}>
-          <option value="Arial">Arial</option>
-          <option value="Verdana">Verdana</option>
-          <option value="Helvetica">Helvetica</option>
-        </select>
+      
         {isEditingText && (
-        <input
-          type="text"
-          value={editingTextValue}
-          onChange={(e) => setEditingTextValue(e.target.value)}
-          onBlur={finalizeTextEditing}
-          style={{ position: 'absolute', top: '10px', left: '10px' }} // This is a placeholder, adjust as needed
-        />
-        
-      )}
+  <input
+    style={{
+      position: 'absolute',
+      top: `${textItems.find(item => item.id === editingTextId).y}px`,
+      left: `${textItems.find(item => item.id === editingTextId).x}px`,
+      fontSize: `${textItems.find(item => item.id === editingTextId).fontSize}px`,
+      zIndex: 1000, // Ensure the input is above all canvas layers
+      background: 'transparent',
+      border: 'none',
+      outline: 'none',
+      width: 'auto',
+      color: '#000', // Match text color or make it configurable
+    }}
+    value={editingTextValue}
+    onChange={(e) => setEditingTextValue(e.target.value)}
+    onBlur={finalizeTextEditing}
+    autoFocus
+  />
+)}
+
+
+   
       </div>
+ 
       <div className="controls">
           <div>
             <label>Brightness</label>
@@ -372,7 +583,9 @@ const redo = useCallback(() => {
 </button>
 
             </div>
-     
+  
+
+            
       <div className="canvas-container">
         <Stage
           width={window.innerWidth - 300}
@@ -381,20 +594,21 @@ const redo = useCallback(() => {
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
-        >
+          >
           <Layer>
-            {image && (
-              <KonvaImage
-                image={image}
-                width={stageRef.current.width()} // Set width to canvas width
-                height={stageRef.current.height()} 
-                x={20}
-                y={20}
-                scaleX={zoomLevel}
-                scaleY={zoomLevel}
-                id="imageNode"
-              />
-            )}
+            
+          {image && (
+            <KonvaImage
+              image={image}
+              x={20}
+              y={20}
+              scaleX={zoomLevel}
+              scaleY={zoomLevel}
+              id="imageNode"
+            />
+          )}
+           </Layer>
+  <Layer>
             {lines.map((line, idx) => (
               <Line
                 key={idx}
@@ -405,19 +619,15 @@ const redo = useCallback(() => {
                 lineCap="round"
               />
             ))}
-               {textItems.map((item, i) => (
-              <Text
-              key={i}
-              {...item}
-              onClick={() => {
-              // Select text item
-              const selected = textItems.find(text => text.id === item.id);
-              if (selected) {
-              setSelectedNodeId(selected.id);
-              }
-              }}
+           {textItems.map((text, idx) => (
+                <Text
+                key={idx}
+                {...text}
+                onClick={() => handleTextClick(text.id)}
+                onDragEnd={(e) => handleTextDragEnd(e, text.id)}
+                draggable
               />
-              ))}
+            ))}
             <Transformer
               ref={trRef}
               boundBoxFunc={(oldBox, newBox) => {

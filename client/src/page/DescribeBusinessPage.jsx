@@ -1,8 +1,7 @@
 import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
 import './DescribeBusinessPage.css'; // Make sure the CSS file is named 'CollageCreator.css'
-import { useNavigate } from 'react-router-dom';
-import myImage from './images/cube.png';
+
 const CollageCreator = () => {
   const [prompt, setPrompt] = useState('');
   const [objects, setObjects] = useState([]);
@@ -12,29 +11,8 @@ const CollageCreator = () => {
   const [generating, setGenerating] = useState({})
   const [added, setAdded] = useState(new Map());
   const [dynamicText, setDynamicText] = useState('Businesses');
-  const [purpose, setPurpose] = useState('');
-  const [activeSelections, setActiveSelections] = useState({
-    mood: '',
-    style: '',
-    colorScheme: '',
-    theme: '',
-    type: '',
-  });
-  const [selections, setSelections] = useState({
-  
-    style: '',
-    mood: '',
-    colorScheme: '',
-    theme: ''
-  });
-  
-  const navigate = useNavigate();
- 
-  
-  const handleSelection = (type, value) => {
-    setActiveSelections(prev => ({ ...prev, [type]: value }));
-  };
-  
+
+
   useEffect(() => {
     const intervalId = setInterval(() => {
       setDynamicText(prevText => prevText === ' Businesses' ? ' Personal Use' : ' Businesses');
@@ -42,22 +20,18 @@ const CollageCreator = () => {
 
     return () => clearInterval(intervalId);
   }, []);
+  
+
   const handlePromptChange = (e) => {
     setPrompt(e.target.value);
-  };
-
-  const handlePurposeSelect = (value) => {
-    setPurpose(value);
-    setSelections({ style: '', mood: '', colorScheme: '', theme: '' }); // Reset selections when purpose changes
-    
   };
 
   const handleSubmitPrompt = async () => {
    
     setLoading(true); 
     try {
-      const response = await axios.post('http://localhost:8080/classify-text', { text: prompt,
-     ...selections });
+     
+      const response = await axios.post('http://localhost:3000/classify-text', { text: prompt });
       console.log('Received data:', response.data); 
       
       const objectList = response.data.result
@@ -76,21 +50,36 @@ const CollageCreator = () => {
       setLoading(false);
     }
   };
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('/classify-text', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: userInput }),
+      });
+      const data = await response.json();
+      console.log('Response from AI:', data.message);
+    } catch (error) {
+      console.error('Error fetching AI response:', error);
+    }
+  };
+  
   const styleOptions = ['Realistic', 'Anime', 'Cartoonistic', 'Painting'];
   const moodOptions = ['Happy', 'Serious', 'Adventurous', 'Relaxed'];
   const colorSchemeOptions = ['Vibrant', 'Monochrome', 'Pastel', 'Dark'];
   const themeOptions = ['Modern', 'Professional', 'Classic', 'Eccentric'];
   const typeOptions = ['Business Card', 'Logo', 'Poster', 'Brochure'];
   const handleGenerateImageForObject = async (objectName) => {
-    setGenerating(prev => ({ ...prev, [objectName]: true })); // Set generating status for the object
+    setGenerating(prev => ({ ...prev, [objectName]: true })); 
     try {
-      // Request two images at once
-      const prompts = [objectName, objectName].map(name => `Generate an image of a ${name}`);
+      const userOptions = `${activeSelections.style ? activeSelections.style : 'default style'}, ${activeSelections.mood ? activeSelections.mood : 'default mood'}, ${activeSelections.colorScheme ? activeSelections.colorScheme : 'default color scheme'}, ${activeSelections.theme ? activeSelections.theme : 'default theme'}`;
+      const prompts = [objectName, objectName].map(name => `Generate an ${userOptions} image of a ${name}`);
       const imageResponses = await Promise.all(prompts.map(prompt =>
-        axios.post('http://localhost:8080/api/v1/dalle', { prompt })
+        axios.post('http://localhost:3000/api/v1/dalle', { prompt })
       ));
             
-      // Update the state with the new image, converting the binary data to a data URL
       setImages(prevImages => ({
         ...prevImages,
         [objectName]: imageResponses.map((res, index) => ({
@@ -103,7 +92,7 @@ const CollageCreator = () => {
       console.error('Error generating images for object:', objectName, error);
     } finally {
       setGenerating(prev => ({ ...prev, [objectName]: false })); 
-      setLoading(false)// Reset generating status for the object
+      setLoading(false)
     }
   };
   const handleAddToCollage = (imageId, objectName) => {
@@ -151,102 +140,9 @@ const CollageCreator = () => {
         disabled={loading} // Disable while loading
       />
     
-    {!purpose && (
-      <>
-        <button onClick={() => setPurpose('Personal')} className="selection-button">
-          Personal
-        </button>
-        <button onClick={() => setPurpose('Business')} className="selection-button">
-          Business
-        </button>
-      </>
-    )}
-
-    {purpose === 'Personal' && (
-      <>
-        <div className="button-group">
-          <p>Mood:</p>
-          {moodOptions.map(mood => (
-            <button
-              key={mood}
-              onClick={() => handleSelection('mood', mood)}
-              className={activeSelections.mood === mood ? 'selection-button active' : 'selection-button'}
-            >
-              {mood}
-            </button>
-          ))}
-        </div>
-        
-        <div className="button-group">
-          {/* Style, Color Scheme, Theme buttons for Personal */}
-        </div>
-      </>
-    )}
-
-    {purpose === 'Business' && (
-      <>
-        <div className="button-group">
-          <p>Type:</p>
-          {typeOptions.map(type => (
-            <button
-              key={type}
-              onClick={() => handleSelection('type', type)}
-              className={activeSelections.type === type ? 'selection-button active' : 'selection-button'}
-            >
-              {type}
-            </button>
-          ))}
-        </div>
-        
-        <div className="button-group">
-          {/* Style, Color Scheme, Theme buttons for Business */}
-        </div>
-      </>
-    )}
-
-    {purpose && (
-      <>
-        {/* Shared Style, Color Scheme, Theme options */}
-        <div className="button-group">
-          <p>Style:</p>
-          {styleOptions.map(style => (
-            <button
-              key={style}
-              onClick={() => handleSelection('style', style)}
-              className={activeSelections.style === style ? 'selection-button active' : 'selection-button'}
-            >
-              {style}
-            </button>
-          ))}
-        </div>
-
-        <div className="button-group">
-          <p>Color Scheme:</p>
-          {colorSchemeOptions.map(colorScheme => (
-            <button
-              key={colorScheme}
-              onClick={() => handleSelection('colorScheme', colorScheme)}
-              className={activeSelections.colorScheme === colorScheme ? 'selection-button active' : 'selection-button'}
-            >
-              {colorScheme}
-            </button>
-          ))}
-        </div>
-
-        <div className="button-group">
-          <p>Theme:</p>
-          {themeOptions.map(theme => (
-            <button
-              key={theme}
-              onClick={() => handleSelection('theme', theme)}
-              className={activeSelections.theme === theme ? 'selection-button active' : 'selection-button'}
-            >
-              {theme}
-            </button>
-          ))}
-        </div>
-      </>
-    )}
+    
+       
+    
 
       <button
         className="classify-text-button"

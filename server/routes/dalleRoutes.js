@@ -18,10 +18,16 @@ router.route('/').get((req, res) => {
 
 router.route('/').post(async (req, res) => {
   try {
-    const { prompt } = req.body;
+      const {
+        prompt,
+        
+        // Extract other properties as necessary
+      } = req.body;
+  
+  
 
     const aiResponse = await openai.createImage({
-      model: 'dall-e-2',
+      model: 'dall-e-3',
       quality: 'hd',
       prompt,
       n: 1,

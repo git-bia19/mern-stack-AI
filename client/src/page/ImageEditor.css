@@ -37,7 +37,7 @@
 /* Toolbar styles */
 .toolbar {
   order: 2; /* Toolbar next to the sidebar */
-  flex: 0 0 180px; /* Adjust width as needed */
+  flex: 0 0 120px; /* Adjust width as needed */
   background-color: #673ab7; /* Purple background for toolbar */
   padding: 10px;
   display: flex;
@@ -66,6 +66,44 @@
 .toolbar button:hover,
 .toolbar select:hover {
   background-color: #5e35b1; /* Darker purple on hover */
+}
+
+.panel-toggle {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #673ab7; /* Example color: deep purple */
+  color: rgb(225, 221, 221);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.background-panel {
+  background-color: #f7f7f7;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.background-panel button, .background-panel select, .background-panel input[type="file"] {
+  width: 100%; /* Full width buttons and inputs */
+  padding: 10px;
+  margin: 5px 0; /* Margin for spacing */
+  border-radius: 4px;
+  border: 1px solid #ccc; /* Subtle border */
+  background-color: #fff;
+  color: black;
+  cursor: pointer;
+}
+
+.background-panel select {
+  cursor: pointer;
 }
 
 /* Canvas container styles */
