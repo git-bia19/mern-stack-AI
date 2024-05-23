@@ -5,10 +5,10 @@ import cors from 'cors';
 import connectDB from './mongodb/connect.js';
 import postRoutes from './routes/postRoutes.js';
 import dalleRoutes from './routes/dalleRoutes.js';
-import openAIroutes from './routes/openAIroutes.js';
 import contactRoutes from './routes/contactRoutes.js'; 
 import loginRoute from './routes/loginRoute.js';
 import removebgAPI from './routes/removebgAPI.js';
+import openAIRoutes from './routes/openAIroutes.js';
 dotenv.config();
 
 const app = express();
@@ -23,10 +23,10 @@ app.get('/', async (req, res) => {
 
 app.use('/api/v1/post', postRoutes);
 app.use('/api/v1/dalle', dalleRoutes);
-app.use('/classify-text', openAIroutes)
 app.use('/api/contact', contactRoutes);
 app.use('/api/auth', loginRoute);
 app.use('/remove-background', removebgAPI);
+app.use('/classify-text', openAIRoutes); 
 
 const startServer = async () => {
   try {

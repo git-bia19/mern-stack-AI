@@ -12,6 +12,7 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
+
 router.route('/').get((req, res) => {
   res.status(200).json({ message: 'Hello from DALL-E!' });
 });
@@ -27,7 +28,7 @@ router.route('/').post(async (req, res) => {
   
 
     const aiResponse = await openai.createImage({
-      model: 'dall-e-3',
+      model: 'dall-e-2',
       quality: 'hd',
       prompt,
       n: 1,
