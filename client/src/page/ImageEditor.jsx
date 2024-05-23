@@ -41,6 +41,38 @@ const ImageEditor = () => {
   const [backgroundImage, setBackgroundImage] = useState(null);
   const [selectedForBackground, setSelectedForBackground] = useState(null);
   const [backgroundLayer, setBackgroundLayer] = useState(null);
+  const [fontSize, setFontSize] = useState(30);
+  const [fontColor, setFontColor] = useState('#000000');
+  const fontOptions = ['Arial', 'Verdana', 'Times New Roman', 'Georgia', 'Monospace'];
+ 
+  
+  const handleTextStyleChange = useCallback((attribute, value) => {
+    setTextItems(currentItems =>
+      currentItems.map(item =>
+        item.id === editingTextId ? { ...item, [attribute]: value } : item
+      )
+    );
+  }, [editingTextId]);
+
+  useEffect(() => {
+    if (isEditingText) {
+      handleTextStyleChange('text', editingTextValue);
+    }
+  }, [editingTextValue, isEditingText, handleTextStyleChange]);
+
+  useEffect(() => {
+    handleTextStyleChange('fontFamily', selectedFont);
+    handleTextStyleChange('fontSize', fontSize);
+    handleTextStyleChange('fill', fontColor);
+  }, [selectedFont, fontSize, fontColor, handleTextStyleChange]);
+
+
+
+const defaultTextStyle = {
+  fontFamily: 'Arial',
+  fontSize: 30,
+  fill: '#000000', // Default text color
+};
 
  
   useEffect(() => {
@@ -133,19 +165,19 @@ const ImageEditor = () => {
   
 
   const removeBackgroundFromImage = async () => {
-    // Check if an image is selected
+
     if (!images[selectedImageIndex]) return;
   
-    const apiKey = "cqcr6A8ig262gs13h5N9cfhM"; // Replace with your API key
+    const apiKey = "cqcr6A8ig262gs13h5N9cfhM"; 
     const imageUrl = images[selectedImageIndex].src;
   
     try {
-      // Convert Data URL or Blob URL to Blob object
+    
       const response = await fetch(imageUrl);
       const imageBlob = await response.blob();
   
       const formData = new FormData();
-      formData.append("image_file", imageBlob, "image.png"); // Assuming the filename doesn't matter to the API
+      formData.append("image_file", imageBlob, "image.png"); 
   
       const res = await fetch("https://api.remove.bg/v1.0/removebg", {
         method: 'POST',
@@ -156,15 +188,14 @@ const ImageEditor = () => {
       });
   
       if (!res.ok) {
-        throw new Error(`Error: ${res.status}`); // If the response is not ok, throw an error
+        throw new Error(`Error: ${res.status}`); 
       }
   
       const data = await res.blob();
   
-      // Create a local URL for the returned image
       const newImageSrc = URL.createObjectURL(data);
   
-      // Update the image state with the new image
+      
       setImages((prevImages) =>
         prevImages.map((img, index) =>
           index === selectedImageIndex ? { ...img, src: newImageSrc } : img
@@ -336,20 +367,22 @@ const addToHistory = useCallback(() => {
       reader.readAsDataURL(file);
     }
   }, []);
-
   const addText = useCallback(() => {
     const newText = {
-      text: 'Type here...', // Initial text placeholder
-      x: 500, // Initial X position
-      y: 500 + (textItems.length * 30), // Stagger the Y position of new text items
-      fontSize: 30,
+      text: 'Type here...',
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+      fontSize: fontSize,
       fontFamily: selectedFont,
-      id: `text_${Date.now()}`, // Unique ID using timestamp
+      fill: fontColor,
+      id: `text_${Date.now()}`,
       draggable: true
     };
-    setTextItems(textItems => [...textItems, newText]);
-    addToHistory(); // Capture this state change for the undo/redo functionality
-  }, [textItems, selectedFont, addToHistory]);
+    setTextItems([...textItems, newText]);
+    setEditingTextId(newText.id);
+    setIsEditingText(true);
+    setEditingTextValue(newText.text);
+  }, [textItems, fontSize, selectedFont, fontColor]);
 
   const handleTextClick = (id) => {
     const textItem = textItems.find(item => item.id === id);
@@ -416,8 +449,28 @@ const handleTextDragEnd = (e, id) => {
   <button onClick={removeBackgroundFromImage}>Remove Background</button>
 </div>
     )}
-      
+      <select onChange={e => setSelectedFont(e.target.value)}>
+        {fontOptions.map(font => (
+          <option key={font} value={font} alt='Font style'>{font}</option>
+        ))}
+      </select>
+      <input
+        type="number"
+        value={fontSize}
+        onChange={e => setFontSize(e.target.value)}
+        alt='Font Size'
 
+      />
+  
+      <input
+        type="color"
+        value={fontColor}
+        onChange={e => setFontColor(e.target.value)}
+        alt='font color'
+
+      />
+      
+    
          <Tooltip title="Save Image" arrow>
         <IconButton onClick={handleSave}>
           <SaveIcon />
@@ -620,13 +673,17 @@ const handleTextDragEnd = (e, id) => {
               />
             ))}
            {textItems.map((text, idx) => (
-                <Text
-                key={idx}
-                {...text}
-                onClick={() => handleTextClick(text.id)}
-                onDragEnd={(e) => handleTextDragEnd(e, text.id)}
-                draggable
-              />
+              <Text
+              key={idx}
+              {...text}
+              onClick={() => {
+                setEditingTextId(text.id);
+                setEditingTextValue(text.text);
+                setIsEditingText(true);
+              }}
+              onDragEnd={(e) => handleTextDragEnd(e, text.id)}
+              draggable
+            />
             ))}
             <Transformer
               ref={trRef}

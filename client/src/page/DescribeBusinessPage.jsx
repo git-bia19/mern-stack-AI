@@ -1,6 +1,7 @@
 import React, { useState ,useEffect} from 'react';
 import axios from 'axios';
 import './DescribeBusinessPage.css'; // Make sure the CSS file is named 'CollageCreator.css'
+import { useNavigate } from 'react-router-dom';
 
 const CollageCreator = () => {
   const [prompt, setPrompt] = useState('');
@@ -11,8 +12,29 @@ const CollageCreator = () => {
   const [generating, setGenerating] = useState({})
   const [added, setAdded] = useState(new Map());
   const [dynamicText, setDynamicText] = useState('Businesses');
-
-
+  const [purpose, setPurpose] = useState('');
+  const [activeSelections, setActiveSelections] = useState({
+    mood: '',
+    style: '',
+    colorScheme: '',
+    theme: '',
+    type: '',
+  });
+  const [selections, setSelections] = useState({
+  
+    style: '',
+    mood: '',
+    colorScheme: '',
+    theme: ''
+  });
+  
+  const navigate = useNavigate();
+ 
+  
+  const handleSelection = (type, value) => {
+    setActiveSelections(prev => ({ ...prev, [type]: value }));
+  };
+  
   useEffect(() => {
     const intervalId = setInterval(() => {
       setDynamicText(prevText => prevText === ' Businesses' ? ' Personal Use' : ' Businesses');
@@ -31,7 +53,8 @@ const CollageCreator = () => {
     setLoading(true); 
     try {
      
-      const response = await axios.post('http://localhost:3000/classify-text', { text: prompt });
+      const response = await axios.post('http://localhost:3000/classify-text', { text: prompt,
+ });
       console.log('Received data:', response.data); 
       
       const objectList = response.data.result
@@ -50,22 +73,6 @@ const CollageCreator = () => {
       setLoading(false);
     }
   };
-  const handleSubmit = async () => {
-    try {
-      const response = await fetch('/classify-text', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: userInput }),
-      });
-      const data = await response.json();
-      console.log('Response from AI:', data.message);
-    } catch (error) {
-      console.error('Error fetching AI response:', error);
-    }
-  };
-  
   const styleOptions = ['Realistic', 'Anime', 'Cartoonistic', 'Painting'];
   const moodOptions = ['Happy', 'Serious', 'Adventurous', 'Relaxed'];
   const colorSchemeOptions = ['Vibrant', 'Monochrome', 'Pastel', 'Dark'];
@@ -142,7 +149,49 @@ const CollageCreator = () => {
     
     
        
-    
+    {purpose && (
+      <>
+        {/* Shared Style, Color Scheme, Theme options */}
+        <div className="button-group">
+          <p>Style:</p>
+          {styleOptions.map(style => (
+            <button
+              key={style}
+              onClick={() => handleSelection('style', style)}
+              className={activeSelections.style === style ? 'selection-button active' : 'selection-button'}
+            >
+              {style}
+            </button>
+          ))}
+        </div>
+
+        <div className="button-group">
+          <p>Color Scheme:</p>
+          {colorSchemeOptions.map(colorScheme => (
+            <button
+              key={colorScheme}
+              onClick={() => handleSelection('colorScheme', colorScheme)}
+              className={activeSelections.colorScheme === colorScheme ? 'selection-button active' : 'selection-button'}
+            >
+              {colorScheme}
+            </button>
+          ))}
+        </div>
+
+        <div className="button-group">
+          <p>Theme:</p>
+          {themeOptions.map(theme => (
+            <button
+              key={theme}
+              onClick={() => handleSelection('theme', theme)}
+              className={activeSelections.theme === theme ? 'selection-button active' : 'selection-button'}
+            >
+              {theme}
+            </button>
+          ))}
+        </div>
+      </>
+    )}
 
       <button
         className="classify-text-button"

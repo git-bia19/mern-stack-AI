@@ -4,7 +4,7 @@
 /* Header styles */
 .header {
   font-family: 'Poppins', sans-serif;
-  background: #000000; /* Dark background for contrast */
+  background: #faf9f9; /* Dark background for contrast */
   padding: 20px;
   display: flex;
   justify-content: space-between;
@@ -15,7 +15,7 @@
 /* Neon gradient for the title */
 .header .title {
   font-size: 1.5rem;
-  background: linear-gradient(90deg, rgb(253, 134, 253) 0%, rgb(177, 101, 253) 100%);
+  background: linear-gradient(90deg, #4ec1a2 0%, rgb(53, 71, 163) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 600;
@@ -29,7 +29,7 @@
 
 .header nav a {
   text-decoration: none;
-  color: #fff;
+  color: #000000;
   font-size: 0.98rem;
   transition: color 0.3s ease;
 }
