@@ -12,7 +12,7 @@ const Contact = () => {
     e.preventDefault();
     try {
       // Ensure this URL matches your server route for contact form submissions
-      await axios.post('http://localhost:8080/api/contact', { name, email, message });
+      await axios.post('http://localhost:3000/api/contact', { name, email, message });
       setSubmitted(true);
     } catch (error) {
       console.log('Submit error:', error);

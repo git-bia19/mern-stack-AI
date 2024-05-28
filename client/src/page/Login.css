@@ -1,38 +1,54 @@
-/* Same @import and body styles from DescribeBusinessPage.css */
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
-  form {
-    background: #252036;
-    padding: 2rem;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  input {
-    background: none;
-    border: 1px solid #8C52FF;
-    margin-bottom: 1rem;
-    padding: 0.5rem;
-    color: white;
-  }
-  
-  button {
-    background: #8C52FF;
-    color: white;
-    padding: 0.5rem;
-    border: none;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background: #A280FF;
-  }
-  
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #fff; /* Change background color as needed */
+}
+
+form {
+  background: #faf9fd;
+  padding: 2rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  width: 300px; /* Adjust width as needed */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Optional: adds shadow for better focus */
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  background: #f7f7f7;
+  border: 2px solid #4d6fba;
+  margin-bottom: 1rem;
+  padding: 0.8rem;
+  border-radius: 4px; /* Rounded corners for the input fields */
+  color: #333;
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder {
+  color: #ccc;
+}
+
+button {
+  background: #4d6fba;
+  color: white;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+button:hover {
+  background: #405c9b; /* Darker shade on hover */
+}
+
+p {
+  color: #ff0000; /* Red color for error messages */
+}

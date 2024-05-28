@@ -95,7 +95,7 @@ body {
 }
 
 .collage-area {
-  background: rgba(172, 192, 231, 0.8); /* Transparency with a dark purple background */
+  background: #fafafa; /* Transparency with a dark purple background */
   padding: 1rem;
   border-radius: 8px;
   min-height: 200px;

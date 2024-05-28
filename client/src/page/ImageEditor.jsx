@@ -44,6 +44,12 @@ const ImageEditor = () => {
   const [fontSize, setFontSize] = useState(30);
   const [fontColor, setFontColor] = useState('#000000');
   const fontOptions = ['Arial', 'Verdana', 'Times New Roman', 'Georgia', 'Monospace'];
+  const [selectedWidth, setSelectedWidth] = useState(100);
+ const [selectedHeight, setSelectedHeight] = useState(100);
+ const [crop, setCrop] = useState({ aspect: 16 / 9 });
+ const [croppedImageUrl, setCroppedImageUrl] = useState(null);
+
+
  
   
   const handleTextStyleChange = useCallback((attribute, value) => {
@@ -67,6 +73,15 @@ const ImageEditor = () => {
   }, [selectedFont, fontSize, fontColor, handleTextStyleChange]);
 
 
+  const handleResize = useCallback(() => {
+    const imageNode = stageRef.current.findOne('#imageNode');
+    if (imageNode) {
+      imageNode.width(selectedWidth);
+      imageNode.height(selectedHeight);
+      imageNode.getLayer().batchDraw(); // Redraw the layer to apply changes
+    }
+  }, [selectedWidth, selectedHeight]);
+  
 
 const defaultTextStyle = {
   fontFamily: 'Arial',
@@ -445,23 +460,29 @@ const handleTextDragEnd = (e, id) => {
   <button onClick={() => {
     handleSetBackground();
     makeImageMovable();
-  }}>Set as Background</button>
+  }}>Set Background & Move Image</button>
   <button onClick={removeBackgroundFromImage}>Remove Background</button>
 </div>
     )}
+     <Tooltip title="Add Text" arrow>
+        <IconButton onClick={addText}  >
+          <AddCircleOutlineIcon />
+        </IconButton>
+      </Tooltip>
       <select onChange={e => setSelectedFont(e.target.value)}>
         {fontOptions.map(font => (
           <option key={font} value={font} alt='Font style'>{font}</option>
         ))}
       </select>
+      <label >Font Size</label>
       <input
         type="number"
-        value={fontSize}
+        value= {fontSize}
         onChange={e => setFontSize(e.target.value)}
         alt='Font Size'
 
       />
-  
+   <label >Font Color</label>
       <input
         type="color"
         value={fontColor}
@@ -469,32 +490,8 @@ const handleTextDragEnd = (e, id) => {
         alt='font color'
 
       />
+   
       
-    
-         <Tooltip title="Save Image" arrow>
-        <IconButton onClick={handleSave}>
-          <SaveIcon />
-        </IconButton>
-      </Tooltip>
-
-      <Tooltip title="Add Text" arrow>
-        <IconButton onClick={addText}  >
-          <AddCircleOutlineIcon />
-        </IconButton>
-      </Tooltip>
-
-      <Tooltip title="Undo" arrow>
-        <IconButton onClick={undo}>
-          <UndoIcon />
-        </IconButton>
-      </Tooltip>
-
-      <Tooltip title="Redo" arrow>
-        <IconButton onClick={redo}>
-          <RedoIcon />
-        </IconButton>
-      </Tooltip>
-
       <Tooltip title="Zoom In" arrow>
         <IconButton onClick={() => setZoomLevel(zoomLevel * 1.1)}>
           <ZoomInIcon />
@@ -506,6 +503,19 @@ const handleTextDragEnd = (e, id) => {
           <ZoomOutIcon />
         </IconButton>
       </Tooltip>
+      <Tooltip title="Undo" arrow>
+        <IconButton onClick={undo}>
+          <UndoIcon />
+        </IconButton>
+      </Tooltip>
+
+      <Tooltip title="Redo" arrow>
+        <IconButton onClick={redo}>
+          <RedoIcon />
+        </IconButton>
+      </Tooltip>
+ 
+    
       
   <Tooltip title="Draw" arrow>
     <IconButton onClick={toggleDrawing}>
@@ -533,6 +543,33 @@ const handleTextDragEnd = (e, id) => {
     autoFocus
   />
 )}
+
+    
+<Tooltip title="Save Image" arrow>
+        <IconButton onClick={handleSave}>
+          <SaveIcon />
+        </IconButton>
+      </Tooltip>
+ <div className="resize-controls">
+  <input
+    type="number"
+    placeholder="Width (px)"
+    value={selectedWidth}
+    onChange={e => setSelectedWidth(Number(e.target.value))}
+    onFocus={e => e.target.placeholder = ''}
+    onBlur={e => e.target.placeholder = 'Width (px)'}
+  />
+  <input
+    type="number"
+    placeholder="Height (px)"
+    value={selectedHeight}
+    onChange={e => setSelectedHeight(Number(e.target.value))}
+    onFocus={e => e.target.placeholder = ''}
+    onBlur={e => e.target.placeholder = 'Height (px)'}
+  />
+  <button onClick={handleResize}>Apply Resize</button>
+</div>
+
 
 
    

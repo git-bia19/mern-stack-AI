@@ -53,7 +53,7 @@ const CollageCreator = () => {
     setLoading(true); 
     try {
      
-      const response = await axios.post('http://localhost:3000/classify-text', { text: prompt,
+      const response = await axios.post('http://localhost:3000/api/classify-text', { text: prompt,
  });
       console.log('Received data:', response.data); 
       
