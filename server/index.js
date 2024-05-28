@@ -7,7 +7,6 @@ import postRoutes from './routes/postRoutes.js';
 import dalleRoutes from './routes/dalleRoutes.js';
 import contactRoutes from './routes/contactRoutes.js'; 
 import loginRoute from './routes/loginRoute.js';
-import removebgAPI from './routes/removebgAPI.js';
 import openAIRoutes from './routes/openAIroutes.js';
 dotenv.config();
 
@@ -25,8 +24,7 @@ app.use('/api/v1/post', postRoutes);
 app.use('/api/v1/dalle', dalleRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/auth', loginRoute);
-app.use('/remove-background', removebgAPI);
-app.use('/classify-text', openAIRoutes); 
+app.use('/api/classify-text', openAIRoutes); 
 
 const startServer = async () => {
   try {
