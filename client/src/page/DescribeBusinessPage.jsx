@@ -12,7 +12,9 @@ const CollageCreator = () => {
   const [generating, setGenerating] = useState({})
   const [added, setAdded] = useState(new Map());
   const [dynamicText, setDynamicText] = useState('Businesses');
+  
   const [purpose, setPurpose] = useState('');
+  /*
   const [activeSelections, setActiveSelections] = useState({
     mood: '',
     style: '',
@@ -27,7 +29,7 @@ const CollageCreator = () => {
     colorScheme: '',
     theme: ''
   });
-  
+  */
   const navigate = useNavigate();
  
   
@@ -53,7 +55,7 @@ const CollageCreator = () => {
     setLoading(true); 
     try {
      
-      const response = await axios.post('http://localhost:3000/api/classify-text', { text: prompt,
+      const response = await axios.post('https://chat.aidesign.software/api/classify-text', { text: prompt,
  });
       console.log('Received data:', response.data); 
       
@@ -73,18 +75,20 @@ const CollageCreator = () => {
       setLoading(false);
     }
   };
+  /*
   const styleOptions = ['Realistic', 'Anime', 'Cartoonistic', 'Painting'];
   const moodOptions = ['Happy', 'Serious', 'Adventurous', 'Relaxed'];
   const colorSchemeOptions = ['Vibrant', 'Monochrome', 'Pastel', 'Dark'];
   const themeOptions = ['Modern', 'Professional', 'Classic', 'Eccentric'];
   const typeOptions = ['Business Card', 'Logo', 'Poster', 'Brochure'];
+  */
   const handleGenerateImageForObject = async (objectName) => {
     setGenerating(prev => ({ ...prev, [objectName]: true })); 
     try {
       const userOptions = `${activeSelections.style ? activeSelections.style : 'default style'}, ${activeSelections.mood ? activeSelections.mood : 'default mood'}, ${activeSelections.colorScheme ? activeSelections.colorScheme : 'default color scheme'}, ${activeSelections.theme ? activeSelections.theme : 'default theme'}`;
       const prompts = [objectName, objectName].map(name => `Generate an ${userOptions} image of a ${name}`);
       const imageResponses = await Promise.all(prompts.map(prompt =>
-        axios.post('http://localhost:3000/api/v1/dalle', { prompt })
+        axios.post('https://chat.aidesign.software/api/v1/dalle', { prompt })
       ));
             
       setImages(prevImages => ({
