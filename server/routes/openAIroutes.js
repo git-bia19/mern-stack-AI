@@ -25,7 +25,7 @@ router.route('/').post(async (req, res) => {
    2) Strictly, List all unique and relevant business elements mentioned by their exact name in seperate bullet points 
     , excluding generic design terms like 'logo' or 'Poster'.
   3)Strictly adhere to 1) and 2) and don't return anything except for what is explicitly asked above.
-   don't return empty items
+   
     `;
     
   
